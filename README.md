@@ -1,5 +1,5 @@
 # Learn Spring Boot Project
->  Results from following codes inside the [Learn Microservices with Spring Boot 3]() book
+>  Results from following codes inside the [Learn Microservices with Spring Boot 3](https://link.springer.com/book/10.1007/978-1-4842-6131-6) book
 
 I've tried to implement it in Kotlin + Gradle.kts though, so technically it's not just copying the code inside the book's [repo](https://github.com/Book-Microservices-v3)
 
