@@ -1,0 +1,83 @@
+services:
+  frontend:
+    image: challenges-frontend:1.0
+    container_name: learn-springboot-frontend
+    ports:
+      - "3000:80"
+  multiplication:
+    image: multiplication:1.0.0
+    container_name: learn-springboot-multiplication
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq-dev
+      - consul-importer
+    networks:
+      - learn-springboot
+  gamification:
+    container_name: learn-springboot-gamification
+    image: gamification:1.0.0
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq-dev
+      - consul-importer
+    networks:
+      - learn-springboot
+  gateway:
+    image: gateway:1.0.0
+    container_name: learn-springboot-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq-dev
+      - consul-importer
+    networks:
+      - learn-springboot
+  logs:
+    image: logs:1.0.0
+    container_name: learn-springboot-logs
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONSUL_HOST=consul
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - rabbitmq-dev
+      - consul-importer
+    networks:
+      - learn-springboot
+  consul-importer:
+    image: consul-importer:1.0
+    depends_on:
+      - consul-dev
+    networks:
+      - learn-springboot
+  consul-dev:
+    image: hashicorp/consul:1.19.2
+    container_name: consul
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    command: "agent -dev -node=learn-springboot -client=0.0.0.0 -log-level=INFO"
+    networks:
+      - learn-springboot
+  rabbitmq-dev:
+    image: rabbitmq:3.13.7-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - learn-springboot
+
+networks:
+  learn-springboot:
+    driver: bridge
